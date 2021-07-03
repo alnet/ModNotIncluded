@@ -1,10 +1,10 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System;
 using System.IO;
 using System.Reflection;
 using static Localization;
 
-namespace InsulatedDoorsMod
+namespace davkas88.InsulatedDoorsMod
 {
     [HarmonyPatch(typeof(Localization), "Initialize")]
     public static class Loc_Initialize_Patch

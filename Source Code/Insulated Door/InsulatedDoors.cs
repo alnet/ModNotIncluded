@@ -1,39 +1,33 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using static STRINGS.UI;
 using Database;
 using System.Collections.Generic;
 
-namespace InsulatedDoorsMod
+namespace davkas88.InsulatedDoorsMod
 {
-    [HarmonyPatch(typeof(Db))]
-    [HarmonyPatch("Initialize")]
-    public static class Db_Initialize_Patch
-    {
-        public static void Prefix()
-        {
-#if VANILLA
-            // Valilla prefers prefix() for adding buildings
-            doorHelpers.doorBuildMenu(InsulatedManualPressureDoorConfig.ID, InsulatedManualPressureDoorConfig.menu, InsulatedManualPressureDoorConfig.pred);
-            doorHelpers.doorBuildMenu(InsulatedPressureDoorConfig.ID, InsulatedPressureDoorConfig.menu, InsulatedPressureDoorConfig.pred);
-            doorHelpers.doorBuildMenu(TinyInsulatedManualPressureDoorConfig.ID, TinyInsulatedManualPressureDoorConfig.menu, TinyInsulatedManualPressureDoorConfig.pred);
-            doorHelpers.doorBuildMenu(TinyInsulatedPressureDoorConfig.ID, TinyInsulatedPressureDoorConfig.menu, TinyInsulatedPressureDoorConfig.pred);
-#endif
-        }
+    public class InsulatedDoorsModPatches
 
-        public static void Postfix()
+    {
+
+        [HarmonyPatch(typeof(Db))]
+        [HarmonyPatch("Initialize")]
+        public class Db_Init_Patch
         {
-#if SPACED_OUT
-            // DLC prefers postfix() for adding buildings
-            doorHelpers.doorBuildMenu(InsulatedManualPressureDoorConfig.ID, InsulatedManualPressureDoorConfig.menu, InsulatedManualPressureDoorConfig.pred);
-            doorHelpers.doorBuildMenu(InsulatedPressureDoorConfig.ID, InsulatedPressureDoorConfig.menu,InsulatedPressureDoorConfig.pred);
-            doorHelpers.doorBuildMenu(TinyInsulatedManualPressureDoorConfig.ID, TinyInsulatedManualPressureDoorConfig.menu, TinyInsulatedManualPressureDoorConfig.pred);
-            doorHelpers.doorBuildMenu(TinyInsulatedPressureDoorConfig.ID, TinyInsulatedPressureDoorConfig.menu, TinyInsulatedPressureDoorConfig.pred);
-#endif
-            // Both prefer postfix() for adding tech tree entries
-            doorHelpers.doorTechTree(InsulatedManualPressureDoorConfig.ID, InsulatedManualPressureDoorConfig.tech);
-            doorHelpers.doorTechTree(InsulatedPressureDoorConfig.ID, InsulatedPressureDoorConfig.tech);
-            doorHelpers.doorTechTree(TinyInsulatedManualPressureDoorConfig.ID, TinyInsulatedManualPressureDoorConfig.tech);
-            doorHelpers.doorTechTree(TinyInsulatedPressureDoorConfig.ID, TinyInsulatedPressureDoorConfig.tech);
+            public static void Prefix()
+            {
+                DoorHelpers.DoorBuildMenu(InsulatedManualPressureDoorConfig.ID, InsulatedManualPressureDoorConfig.menu, InsulatedManualPressureDoorConfig.pred);
+                DoorHelpers.DoorBuildMenu(InsulatedPressureDoorConfig.ID, InsulatedPressureDoorConfig.menu, InsulatedPressureDoorConfig.pred);
+                DoorHelpers.DoorBuildMenu(TinyInsulatedManualPressureDoorConfig.ID, TinyInsulatedManualPressureDoorConfig.menu, TinyInsulatedManualPressureDoorConfig.pred);
+                DoorHelpers.DoorBuildMenu(TinyInsulatedPressureDoorConfig.ID, TinyInsulatedPressureDoorConfig.menu, TinyInsulatedPressureDoorConfig.pred);
+
+            }
+            public static void Postfix()
+            {
+                DoorHelpers.DoorTechTree(InsulatedManualPressureDoorConfig.ID, InsulatedManualPressureDoorConfig.tech);
+                DoorHelpers.DoorTechTree(InsulatedPressureDoorConfig.ID, InsulatedPressureDoorConfig.tech);
+                DoorHelpers.DoorTechTree(TinyInsulatedManualPressureDoorConfig.ID, TinyInsulatedManualPressureDoorConfig.tech);
+                DoorHelpers.DoorTechTree(TinyInsulatedPressureDoorConfig.ID, TinyInsulatedPressureDoorConfig.tech);
+            }
         }
     }
 
@@ -69,18 +63,21 @@ namespace InsulatedDoorsMod
         }
     }
 
-    public class doorHelpers
+    public class DoorHelpers
     {
-        public static void doorBuildMenu(string door, string menu, string pred)
+        public static void DoorBuildMenu(string door, string menu, string pred)
         {
-            int index = TUNING.BUILDINGS.PLANORDER.FindIndex(x => x.category == menu);
+            var hashedMenuCategory = new HashedString(menu);
+            int index = TUNING.BUILDINGS.PLANORDER.FindIndex(x => x.category == hashedMenuCategory);
             if (index < 0)
+            {
                 return;
+            }
             else
             {
-                IList<string> data = TUNING.BUILDINGS.PLANORDER[index].data as IList<string>;
+                IList<string> data = TUNING.BUILDINGS.PLANORDER[index].data;
                 int num = -1;
-                foreach (string str in (IEnumerable<string>)data)
+                foreach (string str in data)
                 {
                     if (str.Equals(pred))
                         num = data.IndexOf(str);
@@ -92,7 +89,7 @@ namespace InsulatedDoorsMod
             }
         }
 
-        public static void doorTechTree(string door, string group)
+        public static void DoorTechTree(string door, string group)
         {
             if (group == "none") return;
 #if VANILLA
@@ -103,10 +100,11 @@ namespace InsulatedDoorsMod
 #endif
 
 #if SPACED_OUT
-            var tech = Db.Get().Techs.TryGet(group);
-		    if (tech != null)
+
+            var researchTechGroup = Db.Get().Techs?.TryGet(group);
+		    if (researchTechGroup != null)
 		    {
-			    tech.unlockedItemIDs.Add(door);
+                researchTechGroup.unlockedItemIDs.Add(door);
 		    }
 #endif
         }

@@ -1,0 +1,6 @@
+C:\Users\kasmith\Source\Repos\alnet\ModNotIncluded\Source Code\Insulated Door\bin\SpacedOutRelease\InsulatedDoor.dll
+C:\Users\kasmith\Source\Repos\alnet\ModNotIncluded\Source Code\Insulated Door\bin\SpacedOutRelease\InsulatedDoor.pdb
+C:\Users\kasmith\Source\Repos\alnet\ModNotIncluded\Source Code\Insulated Door\obj\SpacedOutRelease\InsulatedDoor.csproj.CoreCompileInputs.cache
+C:\Users\kasmith\Source\Repos\alnet\ModNotIncluded\Source Code\Insulated Door\obj\SpacedOutRelease\InsulatedDoor.dll
+C:\Users\kasmith\Source\Repos\alnet\ModNotIncluded\Source Code\Insulated Door\obj\SpacedOutRelease\InsulatedDoor.pdb
+C:\Users\kasmith\Source\Repos\alnet\ModNotIncluded\Source Code\Insulated Door\obj\SpacedOutRelease\InsulatedDoor.csproj.AssemblyReference.cache
